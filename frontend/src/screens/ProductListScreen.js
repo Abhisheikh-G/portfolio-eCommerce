@@ -4,7 +4,12 @@ import { Table, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
-import { listProducts, deleteProduct } from "../actions/productActions";
+import {
+  listProducts,
+  deleteProduct,
+  createProduct,
+} from "../actions/productActions";
+import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
 
 function ProductListScreen({ history }) {
   const dispatch = useDispatch();
@@ -13,6 +18,14 @@ function ProductListScreen({ history }) {
 
   const userLogin = useSelector((st) => st.userLogin);
   const { userInfo } = userLogin;
+
+  const productCreate = useSelector((st) => st.productCreate);
+  const {
+    loading: productCreateLoading,
+    success: productCreateSuccess,
+    error: productCreateError,
+    product: createdProduct,
+  } = productCreate;
 
   const productDelete = useSelector((st) => st.productDelete);
   const {
@@ -23,12 +36,25 @@ function ProductListScreen({ history }) {
   } = productDelete;
 
   useEffect(() => {
-    if (userInfo && userInfo.isAdmin) {
-      dispatch(listProducts());
-    } else {
+    dispatch({ type: PRODUCT_CREATE_RESET });
+    if (!userInfo.isAdmin) {
       history.push("/login");
     }
-  }, [dispatch, history, userInfo, productDelete]);
+    dispatch(listProducts());
+
+    if (productCreateSuccess) {
+      history.push(`/admin/product/${createdProduct._id}/edit`);
+    } else {
+      dispatch(listProducts());
+    }
+  }, [
+    dispatch,
+    history,
+    userInfo,
+    productDelete,
+    productCreateSuccess,
+    createdProduct,
+  ]);
 
   const handleDeleteProduct = (product) => {
     if (
@@ -38,7 +64,9 @@ function ProductListScreen({ history }) {
     }
   };
 
-  const handleCreateProduct = () => {};
+  const handleCreateProduct = () => {
+    dispatch(createProduct());
+  };
 
   return (
     <>
@@ -56,6 +84,13 @@ function ProductListScreen({ history }) {
       {productDelError && <Message variant="error">{productDelError}</Message>}
       {productDelSuccess && (
         <Message variant="success">{productDelMessage}</Message>
+      )}
+      {productCreateLoading && <Loader />}
+      {productCreateError && (
+        <Message variant="error">{productCreateError}</Message>
+      )}
+      {productCreateSuccess && (
+        <Message variant="success">Product successfully created.</Message>
       )}
       {loading ? (
         <Loader />
