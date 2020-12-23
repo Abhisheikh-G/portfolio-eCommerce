@@ -90,7 +90,7 @@ export const orderListAllUserOrdersReducer = (
   action
 ) => {
   switch (action.type) {
-    case ORDER_CREATE_REQUEST:
+    case ORDER_LIST_ALL_USER_ORDERS_REQUEST:
       return {
         loading: true,
       };
