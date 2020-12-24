@@ -7,6 +7,7 @@ import Loader from "../components/Loader";
 import FormContainer from "../components/FormContainer";
 import { listProductDetails, updateProduct } from "../actions/productActions";
 import { PRODUCT_UPDATE_RESET } from "../constants/productConstants";
+import axios from "axios";
 
 function ProductEditScreen({ match, history }) {
   const productID = match.params.id;
@@ -17,6 +18,7 @@ function ProductEditScreen({ match, history }) {
   const [category, setCategory] = useState("");
   const [countInStock, setCountInStock] = useState(0);
   const [description, setDescription] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -66,6 +68,28 @@ function ProductEditScreen({ match, history }) {
     );
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+    setUploading(true);
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
+
+      const { data } = await axios.post("/api/upload", formData, config);
+      setImage(data);
+      setUploading(false);
+    } catch (error) {
+      console.log(error);
+      setUploading(false);
+    }
+  };
+
   return (
     <>
       <Link to="/admin/productlist" className="btn btn-light my-3">
@@ -110,6 +134,13 @@ function ProductEditScreen({ match, history }) {
                 value={image}
                 onChange={(e) => setImage(e.target.value)}
               ></Form.Control>
+              <Form.File
+                id="image-file"
+                label="Choose File"
+                custom
+                onChange={handleImageUpload}
+              ></Form.File>
+              {uploading && <Loader />}
             </Form.Group>
 
             <Form.Group controlId="brand">
@@ -126,7 +157,7 @@ function ProductEditScreen({ match, history }) {
               <Form.Control
                 type="text"
                 placeholder="Enter category"
-                value={image}
+                value={category}
                 onChange={(e) => setCategory(e.target.value)}
               ></Form.Control>
             </Form.Group>
