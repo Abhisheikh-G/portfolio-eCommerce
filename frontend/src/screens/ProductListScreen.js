@@ -4,6 +4,7 @@ import { Table, Button, Row, Col } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
+import Paginate from "../components/Paginate";
 import {
   listProducts,
   deleteProduct,
@@ -11,10 +12,11 @@ import {
 } from "../actions/productActions";
 import { PRODUCT_CREATE_RESET } from "../constants/productConstants";
 
-function ProductListScreen({ history }) {
+function ProductListScreen({ history, match }) {
   const dispatch = useDispatch();
   const productList = useSelector((st) => st.productList);
-  const { loading, products, error } = productList;
+  const pageNumber = match.params.pageNumber || 1;
+  const { loading, products, error, page, pages } = productList;
 
   const userLogin = useSelector((st) => st.userLogin);
   const { userInfo } = userLogin;
@@ -45,7 +47,7 @@ function ProductListScreen({ history }) {
     if (productCreateSuccess) {
       history.push(`/admin/product/${createdProduct._id}/edit`);
     } else {
-      dispatch(listProducts());
+      dispatch(listProducts("", pageNumber));
     }
   }, [
     dispatch,
@@ -54,6 +56,7 @@ function ProductListScreen({ history }) {
     productDelete,
     productCreateSuccess,
     createdProduct,
+    pageNumber,
   ]);
 
   const handleDeleteProduct = (product) => {
@@ -136,6 +139,7 @@ function ProductListScreen({ history }) {
               ))}
             </tbody>
           </Table>
+          <Paginate pages={pages} page={page} isAdmin={userInfo.isAdmin} />
         </>
       )}
     </>
