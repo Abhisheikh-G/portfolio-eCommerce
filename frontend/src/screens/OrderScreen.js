@@ -75,7 +75,7 @@ const OrderScreen = ({ match, history }) => {
     } else {
       setSdkReady(true);
     }
-  }, [dispatch, order, orderId, successPay, successDeliver]);
+  }, [dispatch, userInfo, order, orderId, successPay, successDeliver, history]);
 
   const handlePaymentSuccess = (paymentResult) => {
     dispatch(payOrder(orderId, paymentResult));
@@ -90,7 +90,12 @@ const OrderScreen = ({ match, history }) => {
     <Message variant="danger">{error}</Message>
   ) : (
     <>
-      <h1>Order {order._id}</h1>
+      <div>
+        <h1>Order #:</h1>
+        <h4 style={{ wordWrap: "break-word" }}>
+          <strong>{order._id}</strong>
+        </h4>
+      </div>
       <Row>
         <Col md={8}>
           <ListGroup variant="flush">

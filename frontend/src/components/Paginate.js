@@ -1,7 +1,6 @@
 import React from "react";
 import { Pagination } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
-import { useSelector } from "react-redux";
 
 function Paginate({ pages, page, isAdmin = false, keyword = "" }) {
   return (
