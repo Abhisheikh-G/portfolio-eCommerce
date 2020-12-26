@@ -19,3 +19,28 @@ h2 {
 .rating span {
   margin: 0.1rem;
 }
+
+.carousel-item-next,
+.carousel-item-prev,
+.carousel-item.active {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.carousel {
+  margin: auto;
+}
+
+.custom-caption {
+  color: black;
+  margin: 0.5rem;
+  width: 300px;
+}
+
+.carousel img {
+  max-height: 300px;
+  max-width: 350px;
+  border-radius: 2%;
+}
